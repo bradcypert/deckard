@@ -16,23 +16,80 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
-// downCmd represents the down command
+
+var downCmdConfigFilePath string
+var downCmdDatabaseConfigSelector string
+var downCmdDatabasePassword string
+var downCmdDatabaseHost string
+var downCmdDatabasePort int
+var downCmdDatabaseUser string
+var downCmdDatabaseName string
+
 var downCmd = &cobra.Command{
 	Use:   "down",
 	Short: "Runs one or more \"down\" migrations.",
 	Long: `Runs one or more \"down\" migrations.
-These migrations are likely destructive. Please use caution when executing deckard down.`,
+These migrations are likely destructive. Please use caution when executing deckard down.
+
+Deckard can be instructed to run all down migrations or specific ones.
+
+Running All:
+Example:
+deckard down
+
+Running One:
+Example:
+deckard down add_login_date_to_users
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("down called")
+		fmt.Println("running migrations for: " + strings.Join(args, ", "))
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(downCmd)
+
+	downCmd.Flags().StringVarP(&downCmdDatabaseConfigSelector,
+		"dbKey",
+		"k",
+		"",
+		"The database key to use from the YAML config provided in the configFile argument.")
+
+	downCmd.Flags().StringVarP(&downCmdDatabaseHost,
+		"host",
+		"t",
+		"",
+		"The host for the database you'd like to apply the down migrations to.")
+
+	downCmd.Flags().StringVarP(&downCmdDatabaseName,
+		"database",
+		"d",
+		"",
+		"The database name that you'd like to apply the down migrations to")
+
+	downCmd.Flags().StringVarP(&downCmdDatabaseUser,
+		"user",
+		"u",
+		"",
+		"The user you'd like to connect to the database as.")
+
+	downCmd.Flags().StringVarP(&downCmdDatabasePassword,
+		"password",
+		"a",
+		"",
+		"The password for the database user that you're applying migrations as.")
+
+	downCmd.Flags().IntVarP(&downCmdDatabasePort,
+		"port",
+		"p",
+		0,
+		"The port that the database you're targeting runs on.")
 
 	// Here you will define your flags and configuration settings.
 
