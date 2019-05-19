@@ -6,15 +6,15 @@
 ```bash
 deckard create add_login_date_to_users
 # modify the created files
-deckard up --host=localhost --port=5432 --user=user --password==pass --database==app
-deckard down --host=localhost --port=5432 --user=user --password==pass --database==app
+deckard up --host=localhost --port=5432 --user=user --password=pass --database=app
+deckard down --host=localhost --port=5432 --user=user --password=pass --database=app
 ```
 
 #### Managing your databases via YAML config.
 Deckard also supports managing your databases via YAML.
 Instead of writing
 ```bash
-deckard up --host=localhost --port=5432 --user=user --password==pass --database==app
+deckard up --host=localhost --port=5432 --user=user --password=pass --database=app
 ```
 
 You can simply write
