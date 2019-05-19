@@ -21,8 +21,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
-var downCmdConfigFilePath string
 var downCmdDatabaseConfigSelector string
 var downCmdDatabasePassword string
 var downCmdDatabaseHost string
@@ -47,8 +45,8 @@ Example:
 deckard down add_login_date_to_users
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("down called")
 		fmt.Println("running migrations for: " + strings.Join(args, ", "))
+
 	},
 }
 

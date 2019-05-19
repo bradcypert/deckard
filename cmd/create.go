@@ -62,6 +62,9 @@ Use: deckard create add_login_date_to_users`,
 		upError := createFile(filepath + ".up.sql")
 		downError := createFile(filepath + ".down.sql")
 
+		fmt.Printf("Created file %s\n", filepath + ".up.sql")
+		fmt.Printf("Created file %s\n", filepath + ".down.sql")
+
 		if upError != nil {
 			log.Fatal(upError)
 		}
