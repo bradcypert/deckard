@@ -42,7 +42,9 @@ deckard down
 
 Running One:
 Example:
-deckard down add_login_date_to_users
+deckard down 1558294955321
+# or
+deckard down add_users_to_other_users
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("running migrations for: " + strings.Join(args, ", "))

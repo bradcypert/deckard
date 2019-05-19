@@ -15,9 +15,21 @@
 package cmd
 
 import (
-	"fmt"
+	"deckard/db"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"log"
+	"os"
+	"strings"
 )
+
+var upCmdDatabaseConfigSelector string
+var upCmdDatabasePassword string
+var upCmdDatabaseHost string
+var upCmdDatabasePort int
+var upCmdDatabaseUser string
+var upCmdDatabaseName string
+
 
 // upCmd represents the up command
 var upCmd = &cobra.Command{
@@ -25,12 +37,85 @@ var upCmd = &cobra.Command{
 	Short: "Runs one or more \"up\" migrations.",
 	Long: `Runs one or more \"up\" migrations.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("up called")
+		var migration db.Migration
+		queries := make([]db.Query, 3)
+
+		dir, _ := os.Getwd()
+
+		if len(args) < 1 {
+			// get all migrations in current folder.
+			files, err := ioutil.ReadDir(dir)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for _, file := range files {
+				if strings.HasSuffix(file.Name(),".up.sql") {
+					contents, _ := ioutil.ReadFile(file.Name())
+					queries = append(queries, db.Query{
+						Name:  file.Name(),
+						Value: string(contents),
+					})
+				}
+			}
+			migration = db.Migration {
+				Queries: queries,
+			}
+
+			postgres := db.Postgres{
+				Dbname: upCmdDatabaseName,
+				Port: upCmdDatabasePort,
+				Password: upCmdDatabasePassword,
+				User: upCmdDatabaseUser,
+				Host:upCmdDatabaseHost,
+			}
+
+			postgres.RunUp(migration)
+		} else {
+
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(upCmd)
+
+	upCmd.Flags().StringVarP(&upCmdDatabaseConfigSelector,
+		"dbKey",
+		"k",
+		"",
+		"The database key to use from the YAML config provided in the configFile argument.")
+
+	upCmd.Flags().StringVarP(&upCmdDatabaseHost,
+		"host",
+		"t",
+		"",
+		"The host for the database you'd like to apply the up migrations to.")
+
+	upCmd.Flags().StringVarP(&upCmdDatabaseName,
+		"database",
+		"d",
+		"",
+		"The database name that you'd like to apply the up migrations to")
+
+	upCmd.Flags().StringVarP(&upCmdDatabaseUser,
+		"user",
+		"u",
+		"",
+		"The user you'd like to connect to the database as.")
+
+	upCmd.Flags().StringVarP(&upCmdDatabasePassword,
+		"password",
+		"a",
+		"",
+		"The password for the database user that you're applying migrations as.")
+
+	upCmd.Flags().IntVarP(&upCmdDatabasePort,
+		"port",
+		"p",
+		0,
+		"The port that the database you're targeting runs on.")
+
 
 	// Here you will define your flags and configuration settings.
 
