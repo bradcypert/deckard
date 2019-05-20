@@ -52,7 +52,7 @@ deckard down add_users_to_other_users
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		var migration db.Migration
-		queries := make([]db.Query, 3)
+		queries := make([]db.Query, 0)
 
 		if len(args) < 1 {
 			// get all migrations in current folder.
