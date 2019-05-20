@@ -35,3 +35,6 @@ Alternatively, you can provide deckard the path to the configuration value you w
 ```bash
 deckard up --config=/usr/app/deckard.yml --key=prod
 ```
+
+#### Verifying a migration was ran against the database.
+Sometimes, you may find yourself curious if the migration was ran against the DB. You certainly can fire up your favorite database client and query for the metadata entry (or the schema change!), but Deckard also allows you to verify that a given migration has been ran against a given database. Simply use `deckard verify ~/path/to/my/migration.up.sql` and deckard will verify that that migration has been ran. A word of warning: We simply check to ensure the metadata table contains a matching entry for the migration. Basically, deckard is only verifying that the migration has been applied in the "UP" position. It won't verify that the schema is currently matching the changes that were introduced in that migration.
