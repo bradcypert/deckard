@@ -33,8 +33,6 @@ func (p Postgres) connect() *sql.DB {
 		panic(err)
 	}
 
-	fmt.Println("Successfully connected!")
-
 	ensureDeckardTableExists(*db)
 
 	return db
@@ -70,7 +68,6 @@ func storeMigrationMetadata(db *sql.DB, query Query) (sql.Result, error) {
 func (p Postgres) RunUp(migration Migration) {
 	db := p.connect()
 	defer db.Close()
-	println("Running...")
 	for _, query := range migration.Queries {
 		println(query.Value)
 		_, err := db.Exec(query.Value)
@@ -97,6 +94,7 @@ func (p Postgres) RunDown(migration Migration) {
 	db := p.connect()
 	defer db.Close()
 	for _, query := range migration.Queries {
+		println(query.Value)
 		_, err := db.Exec(query.Value)
 		if err != nil {
 			_, err = deleteMigrationMetadata(db, query)

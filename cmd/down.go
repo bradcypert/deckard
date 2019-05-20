@@ -15,7 +15,10 @@
 package cmd
 
 import (
-	"fmt"
+	"deckard/db"
+	"io/ioutil"
+	"log"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -47,8 +50,43 @@ deckard down 1558294955321
 deckard down add_users_to_other_users
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("running migrations for: " + strings.Join(args, ", "))
+		var migration db.Migration
+		queries := make([]db.Query, 3)
 
+		dir, _ := os.Getwd()
+
+		if len(args) < 1 {
+			// get all migrations in current folder.
+			files, err := ioutil.ReadDir(dir)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for _, file := range files {
+				if strings.HasSuffix(file.Name(),".down.sql") {
+					contents, _ := ioutil.ReadFile(file.Name())
+					queries = append(queries, db.Query{
+						Name:  file.Name(),
+						Value: string(contents),
+					})
+				}
+			}
+			migration = db.Migration {
+				Queries: queries,
+			}
+
+			postgres := db.Postgres{
+				Dbname: downCmdDatabaseName,
+				Port: downCmdDatabasePort,
+				Password: downCmdDatabasePassword,
+				User: downCmdDatabaseUser,
+				Host: downCmdDatabaseHost,
+			}
+
+			postgres.RunDown(migration)
+		} else {
+
+		}
 	},
 }
 
