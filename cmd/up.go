@@ -29,7 +29,7 @@ var upCmdDatabaseHost string
 var upCmdDatabasePort int
 var upCmdDatabaseUser string
 var upCmdDatabaseName string
-
+var upCmdInputDir string
 
 // upCmd represents the up command
 var upCmd = &cobra.Command{
@@ -40,11 +40,9 @@ var upCmd = &cobra.Command{
 		var migration db.Migration
 		queries := make([]db.Query, 3)
 
-		dir, _ := os.Getwd()
-
 		if len(args) < 1 {
 			// get all migrations in current folder.
-			files, err := ioutil.ReadDir(dir)
+			files, err := ioutil.ReadDir(upCmdInputDir)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -115,6 +113,13 @@ func init() {
 		"p",
 		0,
 		"The port that the database you're targeting runs on.")
+
+	dir, _ := os.Getwd()
+	upCmd.Flags().StringVarP(&upCmdInputDir,
+		"inputDir",
+		"i",
+		dir,
+		"Directory which contains the migrations")
 
 
 	// Here you will define your flags and configuration settings.

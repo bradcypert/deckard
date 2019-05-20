@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var outputDir string
+var createOutputDir string
 
 func createFile(path string) error {
 	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -54,11 +54,11 @@ Use: deckard create add_login_date_to_users`,
 		fmt.Println("create called")
 
 		// Add in the / suffix if it wasn't added by the user
-		if len(outputDir) > 0 && !strings.HasSuffix(outputDir, "/") {
-			outputDir += "/"
+		if len(createOutputDir) > 0 && !strings.HasSuffix(createOutputDir, "/") {
+			createOutputDir += "/"
 		}
 
-		filepath := outputDir + makeTimestamp() + "__" + args[0]
+		filepath := createOutputDir + makeTimestamp() + "__" + args[0]
 		upError := createFile(filepath + ".up.sql")
 		downError := createFile(filepath + ".down.sql")
 
@@ -77,7 +77,7 @@ Use: deckard create add_login_date_to_users`,
 
 func init() {
 	rootCmd.AddCommand(createCmd)
-	createCmd.Flags().StringVarP(&outputDir, "outputDir", "o", "", "Output directory to write the migration to, defaults to current directory.")
+	createCmd.Flags().StringVarP(&createOutputDir, "outputDir", "o", "", "Output directory to write the migration to, defaults to current directory.")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

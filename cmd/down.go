@@ -30,6 +30,7 @@ var downCmdDatabaseHost string
 var downCmdDatabasePort int
 var downCmdDatabaseUser string
 var downCmdDatabaseName string
+var downCmdInputDir string
 
 var downCmd = &cobra.Command{
 	Use:   "down",
@@ -53,11 +54,9 @@ deckard down add_users_to_other_users
 		var migration db.Migration
 		queries := make([]db.Query, 3)
 
-		dir, _ := os.Getwd()
-
 		if len(args) < 1 {
 			// get all migrations in current folder.
-			files, err := ioutil.ReadDir(dir)
+			files, err := ioutil.ReadDir(downCmdInputDir)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -128,6 +127,14 @@ func init() {
 		"p",
 		0,
 		"The port that the database you're targeting runs on.")
+
+	dir, _ := os.Getwd()
+	downCmd.Flags().StringVarP(&downCmdInputDir,
+		"inputDir",
+		"i",
+		dir,
+		"Directory which contains the migrations")
+
 
 	// Here you will define your flags and configuration settings.
 
