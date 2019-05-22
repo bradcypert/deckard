@@ -74,9 +74,14 @@ func storeMigrationMetadata(db *sql.DB, query Query) (sql.Result, error) {
 func (p Postgres) RunUp(migration Migration) {
 	db := p.connect()
 	defer db.Close()
+	ranSomething := false
 	for _, query := range migration.Queries {
+		if hasDbAlreadyRan(db, query) {
+			continue
+		}
 		println(query.Value)
 		_, err := db.Exec(query.Value)
+		ranSomething = true
 		if err == nil {
 			_, err = storeMigrationMetadata(db, query)
 			if err != nil {
@@ -86,21 +91,29 @@ func (p Postgres) RunUp(migration Migration) {
 			log.Fatal("Failed to execute migration!", err)
 		}
 	}
+
+	if !ranSomething {
+		fmt.Println("No migrations were ran!")
+	}
 }
 
 func deleteMigrationMetadata(db *sql.DB, query Query) (sql.Result, error) {
 	sqlStatement := `DELETE FROM deckard_horadric_cube WHERE name = $1`
 	upName := strings.ReplaceAll(query.Name, ".down.sql", ".up.sql")
-	println(upName)
 	return db.Exec(sqlStatement, upName)
 }
 
 func (p Postgres) RunDown(migration Migration) {
 	db := p.connect()
 	defer db.Close()
+	ranSomething := false
 	for _, query := range migration.Queries {
+		if !canRunDownMigration(db, query) {
+			continue
+		}
 		println(query.Value)
 		_, err := db.Exec(query.Value)
+		ranSomething = true
 		if err == nil {
 			_, err = deleteMigrationMetadata(db, query)
 			if err != nil {
@@ -110,6 +123,43 @@ func (p Postgres) RunDown(migration Migration) {
 			log.Fatal("Failed to execute migration!", err)
 		}
 	}
+
+	if !ranSomething {
+		fmt.Println("No migrations were ran!")
+	}
+}
+
+func canRunDownMigration(db *sql.DB, query Query) bool {
+	var name string
+	var hash string
+	var id int
+	sqlStatement := `SELECT id, name, hash FROM deckard_horadric_cube WHERE name = $1`
+	upName := strings.ReplaceAll(query.Name, ".down.sql", ".up.sql")
+	row := db.QueryRow(sqlStatement, upName)
+	switch err := row.Scan(&id, &name, &hash); err {
+	case sql.ErrNoRows:
+		return false
+	case nil:
+		return true
+	default:
+		return false
+	}
+}
+
+func hasDbAlreadyRan(db *sql.DB, query Query) bool {
+	var name string
+	var hash string
+	var id int
+	sqlStatement := `SELECT id, name, hash FROM deckard_horadric_cube WHERE hash=$1;`
+	row := db.QueryRow(sqlStatement, createHash(query.Value))
+	switch err := row.Scan(&id, &name, &hash); err {
+	case sql.ErrNoRows:
+		return false
+	case nil:
+		return true
+	default:
+		return false
+	}
 }
 
 func (p Postgres) Verify(migration Migration) {
@@ -118,23 +168,13 @@ func (p Postgres) Verify(migration Migration) {
 	for _, query := range migration.Queries {
 		println("Verifying:", query.Value)
 
-		sqlStatement := `SELECT id, name, hash FROM deckard_horadric_cube WHERE hash=$1;`
-		var name string
-		var hash string
-		var id int
-		// Replace 3 with an ID from your database or another random
-		// value to test the no rows use case.
-		row := db.QueryRow(sqlStatement, createHash(query.Value))
-		switch err := row.Scan(&id, &name, &hash); err {
-		case sql.ErrNoRows:
+		if hasDbAlreadyRan(db, query) {
+			fmt.Println(`Validation Successful! It looks like you've already ran`, query.Value, `on this database.`)
+		} else {
 			fmt.Println(`Warning: Deckard cannot verify the migration.
 Please ensure that the migration has not been changed locally since it was last ran.
 If the migration has been changed, you may want to run deckard down and deckard up again.
 Consider backing up your data before running deckard down.`)
-		case nil:
-			fmt.Println(`Validation Successful! It looks like you've already ran`, query.Value, `on this database.`)
-		default:
-			log.Fatal("Failed to verify query:", query.Value, err)
 		}
 	}
 }
