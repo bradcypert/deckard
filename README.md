@@ -18,7 +18,7 @@ deckard down --host=localhost --port=5432 --user=user --password=pass --database
 - [x] Down Migrations for Postgres
 - [x] Verify integrity for Postgres
 - [x] Create new migrations from Deckard
-- [ ] Allow reading from Config file instead of cmd flags
+- [x] Allow reading from Config file instead of cmd flags
 - [ ] Support for MySQL
 
 #### Managing your databases via YAML config.
