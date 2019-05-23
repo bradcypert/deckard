@@ -16,18 +16,12 @@ package cmd
 
 import (
 	"deckard/db"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
-
-var verifyCmdDatabaseConfigSelector string
-var verifyCmdDatabasePassword string
-var verifyCmdDatabaseHost string
-var verifyCmdDatabasePort int
-var verifyCmdDatabaseUser string
-var verifyCmdDatabaseName string
 
 // verifyCmd represents the verify command
 var verifyCmd = &cobra.Command{
@@ -58,11 +52,11 @@ deckard verify ./migrations/1234_add_login_date_to_users.up.sql`,
 		}
 
 		postgres := db.Postgres{
-			Dbname: verifyCmdDatabaseName,
-			Port: verifyCmdDatabasePort,
-			Password: verifyCmdDatabasePassword,
-			User: verifyCmdDatabaseUser,
-			Host: verifyCmdDatabaseHost,
+			Dbname: cmdDatabaseName,
+			Port: cmdDatabasePort,
+			Password: cmdDatabasePassword,
+			User: cmdDatabaseUser,
+			Host: cmdDatabaseHost,
 		}
 
 		postgres.Verify(migration)
@@ -72,49 +66,47 @@ deckard verify ./migrations/1234_add_login_date_to_users.up.sql`,
 func init() {
 	rootCmd.AddCommand(verifyCmd)
 
-	verifyCmd.Flags().StringVarP(&verifyCmdDatabaseConfigSelector,
+	verifyCmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
 		"dbKey",
 		"k",
 		"",
 		"The database key to use from the YAML config provided in the configFile argument.")
 
-	verifyCmd.Flags().StringVarP(&verifyCmdDatabaseHost,
+	verifyCmd.Flags().StringVarP(&cmdDatabaseHost,
 		"host",
 		"t",
 		"",
 		"The host for the database you'd like to apply the up migrations to.")
 
-	verifyCmd.Flags().StringVarP(&verifyCmdDatabaseName,
+	verifyCmd.Flags().StringVarP(&cmdDatabaseName,
 		"database",
 		"d",
 		"",
 		"The database name that you'd like to apply the up migrations to")
 
-	verifyCmd.Flags().StringVarP(&verifyCmdDatabaseUser,
+	verifyCmd.Flags().StringVarP(&cmdDatabaseUser,
 		"user",
 		"u",
 		"",
 		"The user you'd like to connect to the database as.")
 
-	verifyCmd.Flags().StringVarP(&verifyCmdDatabasePassword,
+	verifyCmd.Flags().StringVarP(&cmdDatabasePassword,
 		"password",
 		"a",
 		"",
 		"The password for the database user that you're applying migrations as.")
 
-	verifyCmd.Flags().IntVarP(&verifyCmdDatabasePort,
+	verifyCmd.Flags().IntVarP(&cmdDatabasePort,
 		"port",
 		"p",
 		0,
 		"The port that the database you're targeting runs on.")
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// verifyCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// verifyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	if cmdDatabaseConfigSelector != "" {
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".port", verifyCmd.Flags().Lookup("port"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".password", verifyCmd.Flags().Lookup("password"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".user", verifyCmd.Flags().Lookup("user"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".host", verifyCmd.Flags().Lookup("host"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".database", verifyCmd.Flags().Lookup("database"))
+	}
 }

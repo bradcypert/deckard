@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"deckard/db"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
 	"os"
@@ -23,14 +24,6 @@ import (
 
 	"github.com/spf13/cobra"
 )
-
-var downCmdDatabaseConfigSelector string
-var downCmdDatabasePassword string
-var downCmdDatabaseHost string
-var downCmdDatabasePort int
-var downCmdDatabaseUser string
-var downCmdDatabaseName string
-var downCmdInputDir string
 
 var downCmd = &cobra.Command{
 	Use:   "down",
@@ -56,7 +49,7 @@ deckard down add_users_to_other_users
 
 		if len(args) < 1 {
 			// get all migrations in current folder.
-			files, err := ioutil.ReadDir(downCmdInputDir)
+			files, err := ioutil.ReadDir(cmdInputDir)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -75,11 +68,11 @@ deckard down add_users_to_other_users
 			}
 
 			postgres := db.Postgres{
-				Dbname: downCmdDatabaseName,
-				Port: downCmdDatabasePort,
-				Password: downCmdDatabasePassword,
-				User: downCmdDatabaseUser,
-				Host: downCmdDatabaseHost,
+				Dbname: cmdDatabaseName,
+				Port: cmdDatabasePort,
+				Password: cmdDatabasePassword,
+				User: cmdDatabaseUser,
+				Host: cmdDatabaseHost,
 			}
 
 			postgres.RunDown(migration)
@@ -92,57 +85,54 @@ deckard down add_users_to_other_users
 func init() {
 	rootCmd.AddCommand(downCmd)
 
-	downCmd.Flags().StringVarP(&downCmdDatabaseConfigSelector,
+	downCmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
 		"dbKey",
 		"k",
 		"",
 		"The database key to use from the YAML config provided in the configFile argument.")
 
-	downCmd.Flags().StringVarP(&downCmdDatabaseHost,
+	downCmd.Flags().StringVarP(&cmdDatabaseHost,
 		"host",
 		"t",
 		"",
 		"The host for the database you'd like to apply the down migrations to.")
 
-	downCmd.Flags().StringVarP(&downCmdDatabaseName,
+	downCmd.Flags().StringVarP(&cmdDatabaseName,
 		"database",
 		"d",
 		"",
 		"The database name that you'd like to apply the down migrations to")
 
-	downCmd.Flags().StringVarP(&downCmdDatabaseUser,
+	downCmd.Flags().StringVarP(&cmdDatabaseUser,
 		"user",
 		"u",
 		"",
 		"The user you'd like to connect to the database as.")
 
-	downCmd.Flags().StringVarP(&downCmdDatabasePassword,
+	downCmd.Flags().StringVarP(&cmdDatabasePassword,
 		"password",
 		"a",
 		"",
 		"The password for the database user that you're applying migrations as.")
 
-	downCmd.Flags().IntVarP(&downCmdDatabasePort,
+	downCmd.Flags().IntVarP(&cmdDatabasePort,
 		"port",
 		"p",
 		0,
 		"The port that the database you're targeting runs on.")
 
 	dir, _ := os.Getwd()
-	downCmd.Flags().StringVarP(&downCmdInputDir,
+	downCmd.Flags().StringVarP(&cmdInputDir,
 		"inputDir",
 		"i",
 		dir,
 		"Directory which contains the migrations")
 
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// downCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// downCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	if cmdDatabaseConfigSelector != "" {
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".port", downCmd.Flags().Lookup("port"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".password", downCmd.Flags().Lookup("password"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".user", downCmd.Flags().Lookup("user"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".host", downCmd.Flags().Lookup("host"))
+		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".database", downCmd.Flags().Lookup("database"))
+	}
 }

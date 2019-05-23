@@ -17,19 +17,12 @@ package cmd
 import (
 	"deckard/db"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 )
-
-var upCmdDatabaseConfigSelector string
-var upCmdDatabasePassword string
-var upCmdDatabaseHost string
-var upCmdDatabasePort int
-var upCmdDatabaseUser string
-var upCmdDatabaseName string
-var upCmdInputDir string
 
 // upCmd represents the up command
 var upCmd = &cobra.Command{
@@ -37,12 +30,19 @@ var upCmd = &cobra.Command{
 	Short: "Runs one or more \"up\" migrations.",
 	Long: `Runs one or more \"up\" migrations.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if cmdDatabaseConfigSelector != "" {
+			cmdDatabasePort = viper.GetInt(cmdDatabaseConfigSelector+".port")
+			cmdDatabasePassword = viper.GetString(cmdDatabaseConfigSelector+".password")
+			cmdDatabaseUser = viper.GetString(cmdDatabaseConfigSelector+".user")
+			cmdDatabaseHost = viper.GetString(cmdDatabaseConfigSelector+".host")
+			cmdDatabaseName = viper.GetString(cmdDatabaseConfigSelector+".database")
+		}
 		var migration db.Migration
 		queries := make([]db.Query, 0)
 
 		if len(args) < 1 {
 			// get all migrations in current folder.
-			files, err := ioutil.ReadDir(upCmdInputDir)
+			files, err := ioutil.ReadDir(cmdInputDir)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -61,11 +61,11 @@ var upCmd = &cobra.Command{
 			}
 
 			postgres := db.Postgres{
-				Dbname: upCmdDatabaseName,
-				Port: upCmdDatabasePort,
-				Password: upCmdDatabasePassword,
-				User: upCmdDatabaseUser,
-				Host:upCmdDatabaseHost,
+				Dbname: cmdDatabaseName,
+				Port: cmdDatabasePort,
+				Password: cmdDatabasePassword,
+				User: cmdDatabaseUser,
+				Host: cmdDatabaseHost,
 			}
 
 			postgres.RunUp(migration)
@@ -78,57 +78,46 @@ var upCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(upCmd)
 
-	upCmd.Flags().StringVarP(&upCmdDatabaseConfigSelector,
+	upCmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
 		"dbKey",
 		"k",
 		"",
 		"The database key to use from the YAML config provided in the configFile argument.")
 
-	upCmd.Flags().StringVarP(&upCmdDatabaseHost,
+	upCmd.Flags().StringVarP(&cmdDatabaseHost,
 		"host",
 		"t",
 		"",
 		"The host for the database you'd like to apply the up migrations to.")
 
-	upCmd.Flags().StringVarP(&upCmdDatabaseName,
+	upCmd.Flags().StringVarP(&cmdDatabaseName,
 		"database",
 		"d",
 		"",
 		"The database name that you'd like to apply the up migrations to")
 
-	upCmd.Flags().StringVarP(&upCmdDatabaseUser,
+	upCmd.Flags().StringVarP(&cmdDatabaseUser,
 		"user",
 		"u",
 		"",
 		"The user you'd like to connect to the database as.")
 
-	upCmd.Flags().StringVarP(&upCmdDatabasePassword,
+	upCmd.Flags().StringVarP(&cmdDatabasePassword,
 		"password",
 		"a",
 		"",
 		"The password for the database user that you're applying migrations as.")
 
-	upCmd.Flags().IntVarP(&upCmdDatabasePort,
+	upCmd.Flags().IntVarP(&cmdDatabasePort,
 		"port",
 		"p",
 		0,
 		"The port that the database you're targeting runs on.")
 
 	dir, _ := os.Getwd()
-	upCmd.Flags().StringVarP(&upCmdInputDir,
+	upCmd.Flags().StringVarP(&cmdInputDir,
 		"inputDir",
 		"i",
 		dir,
 		"Directory which contains the migrations")
-
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// upCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// upCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
