@@ -18,17 +18,17 @@ deckard down --host=localhost --port=5432 --user=user --password=pass --database
 - [x] Down Migrations for Postgres
 - [x] Verify integrity for Postgres
 - [x] Create new migrations from Deckard
-- [ ] Allow reading from Config file instead of cmd flags
+- [x] Allow reading from Config file instead of cmd flags
 - [ ] Support for MySQL
 
 #### Managing your databases via YAML config.
-Deckard will also support managing your databases via YAML.
+Deckard also supports managing your databases via YAML.
 Instead of writing
 ```bash
 deckard up --host=localhost --port=5432 --user=user --password=pass --database=app
 ```
 
-You will be able to simply write
+You can simply write
 ```bash
 deckard up --key=prod
 ```
@@ -44,7 +44,7 @@ prod:
 
 Alternatively, you can provide deckard the path to the configuration value you want to use.
 ```bash
-deckard up --config=/usr/app/deckard.yml --key=prod
+deckard up --config=/usr/app/deckard.yml --dbKey=prod
 ```
 
 #### Verifying a migration was ran against the database.
