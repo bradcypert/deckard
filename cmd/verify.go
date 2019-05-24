@@ -36,6 +36,13 @@ Example:
 deckard verify ./migrations/1234_add_login_date_to_users.up.sql`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		if cmdDatabaseConfigSelector != "" {
+			cmdDatabasePort = viper.GetInt(cmdDatabaseConfigSelector+".port")
+			cmdDatabasePassword = viper.GetString(cmdDatabaseConfigSelector+".password")
+			cmdDatabaseUser = viper.GetString(cmdDatabaseConfigSelector+".user")
+			cmdDatabaseHost = viper.GetString(cmdDatabaseConfigSelector+".host")
+			cmdDatabaseName = viper.GetString(cmdDatabaseConfigSelector+".database")
+		}
 		var migration db.Migration
 		queries := make([]db.Query, 0)
 
@@ -101,12 +108,4 @@ func init() {
 		"p",
 		0,
 		"The port that the database you're targeting runs on.")
-
-	if cmdDatabaseConfigSelector != "" {
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".port", verifyCmd.Flags().Lookup("port"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".password", verifyCmd.Flags().Lookup("password"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".user", verifyCmd.Flags().Lookup("user"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".host", verifyCmd.Flags().Lookup("host"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".database", verifyCmd.Flags().Lookup("database"))
-	}
 }

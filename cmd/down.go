@@ -44,6 +44,13 @@ deckard down 1558294955321
 deckard down add_users_to_other_users
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		if cmdDatabaseConfigSelector != "" {
+			cmdDatabasePort = viper.GetInt(cmdDatabaseConfigSelector+".port")
+			cmdDatabasePassword = viper.GetString(cmdDatabaseConfigSelector+".password")
+			cmdDatabaseUser = viper.GetString(cmdDatabaseConfigSelector+".user")
+			cmdDatabaseHost = viper.GetString(cmdDatabaseConfigSelector+".host")
+			cmdDatabaseName = viper.GetString(cmdDatabaseConfigSelector+".database")
+		}
 		var migration db.Migration
 		queries := make([]db.Query, 0)
 
@@ -127,12 +134,4 @@ func init() {
 		"i",
 		dir,
 		"Directory which contains the migrations")
-
-	if cmdDatabaseConfigSelector != "" {
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".port", downCmd.Flags().Lookup("port"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".password", downCmd.Flags().Lookup("password"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".user", downCmd.Flags().Lookup("user"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".host", downCmd.Flags().Lookup("host"))
-		_ = viper.BindPFlag(cmdDatabaseConfigSelector+".database", downCmd.Flags().Lookup("database"))
-	}
 }
