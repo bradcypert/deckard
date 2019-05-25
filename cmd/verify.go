@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"deckard/db"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"strings"
 
@@ -36,13 +35,7 @@ Example:
 deckard verify ./migrations/1234_add_login_date_to_users.up.sql`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if cmdDatabaseConfigSelector != "" {
-			cmdDatabasePort = viper.GetInt(cmdDatabaseConfigSelector+".port")
-			cmdDatabasePassword = viper.GetString(cmdDatabaseConfigSelector+".password")
-			cmdDatabaseUser = viper.GetString(cmdDatabaseConfigSelector+".user")
-			cmdDatabaseHost = viper.GetString(cmdDatabaseConfigSelector+".host")
-			cmdDatabaseName = viper.GetString(cmdDatabaseConfigSelector+".database")
-		}
+		bindVarsFromConfig()
 		var migration db.Migration
 		queries := make([]db.Query, 0)
 
@@ -74,7 +67,7 @@ func init() {
 	rootCmd.AddCommand(verifyCmd)
 
 	verifyCmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
-		"dbKey",
+		"key",
 		"k",
 		"",
 		"The database key to use from the YAML config provided in the configFile argument.")

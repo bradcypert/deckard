@@ -44,7 +44,7 @@ prod:
 
 Alternatively, you can provide deckard the path to the configuration value you want to use.
 ```bash
-deckard up --config=/usr/app/deckard.yml --dbKey=prod
+deckard up --config=/usr/app/deckard.yml --key=prod
 ```
 
 #### Verifying a migration was ran against the database.
