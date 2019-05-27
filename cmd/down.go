@@ -2,13 +2,51 @@ package cmd
 
 import (
 	"deckard/db"
+	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-
-	"github.com/spf13/cobra"
 )
+
+func downFunc(args []string) {
+	bindVarsFromConfig()
+	var migration db.Migration
+	queries := make([]db.Query, 0)
+
+	if len(args) < 1 {
+		// get all migrations in current folder.
+		files, err := ioutil.ReadDir(cmdInputDir)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, file := range files {
+			if strings.HasSuffix(file.Name(),".down.sql") {
+				contents, _ := ioutil.ReadFile(file.Name())
+				queries = append(queries, db.Query{
+					Name:  file.Name(),
+					Value: string(contents),
+				})
+			}
+		}
+		migration = db.Migration {
+			Queries: queries,
+		}
+
+		postgres := db.Postgres{
+			Dbname: cmdDatabaseName,
+			Port: cmdDatabasePort,
+			Password: cmdDatabasePassword,
+			User: cmdDatabaseUser,
+			Host: cmdDatabaseHost,
+		}
+
+		postgres.RunDown(migration)
+	} else {
+
+	}
+}
 
 var downCmd = &cobra.Command{
 	Use:   "down",
@@ -29,42 +67,7 @@ deckard down 1558294955321
 deckard down add_users_to_other_users
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		bindVarsFromConfig()
-		var migration db.Migration
-		queries := make([]db.Query, 0)
-
-		if len(args) < 1 {
-			// get all migrations in current folder.
-			files, err := ioutil.ReadDir(cmdInputDir)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			for _, file := range files {
-				if strings.HasSuffix(file.Name(),".down.sql") {
-					contents, _ := ioutil.ReadFile(file.Name())
-					queries = append(queries, db.Query{
-						Name:  file.Name(),
-						Value: string(contents),
-					})
-				}
-			}
-			migration = db.Migration {
-				Queries: queries,
-			}
-
-			postgres := db.Postgres{
-				Dbname: cmdDatabaseName,
-				Port: cmdDatabasePort,
-				Password: cmdDatabasePassword,
-				User: cmdDatabaseUser,
-				Host: cmdDatabaseHost,
-			}
-
-			postgres.RunDown(migration)
-		} else {
-
-		}
+		downFunc(args)
 	},
 }
 

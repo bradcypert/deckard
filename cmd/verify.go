@@ -16,11 +16,38 @@ package cmd
 
 import (
 	"deckard/db"
+	"github.com/spf13/cobra"
 	"io/ioutil"
 	"strings"
-
-	"github.com/spf13/cobra"
 )
+
+func verifyFunc(args []string) {
+	bindVarsFromConfig()
+	var migration db.Migration
+	queries := make([]db.Query, 0)
+
+	if strings.HasSuffix(args[0],".up.sql") {
+		contents, _ := ioutil.ReadFile(args[0])
+		queries = append(queries, db.Query{
+			Name:  "",
+			Value: string(contents),
+		})
+	}
+
+	migration = db.Migration {
+		Queries: queries,
+	}
+
+	postgres := db.Postgres{
+		Dbname: cmdDatabaseName,
+		Port: cmdDatabasePort,
+		Password: cmdDatabasePassword,
+		User: cmdDatabaseUser,
+		Host: cmdDatabaseHost,
+	}
+
+	postgres.Verify(migration)
+}
 
 // verifyCmd represents the verify command
 var verifyCmd = &cobra.Command{
@@ -35,31 +62,7 @@ Example:
 deckard verify ./migrations/1234_add_login_date_to_users.up.sql`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		bindVarsFromConfig()
-		var migration db.Migration
-		queries := make([]db.Query, 0)
-
-		if strings.HasSuffix(args[0],".up.sql") {
-			contents, _ := ioutil.ReadFile(args[0])
-			queries = append(queries, db.Query{
-				Name:  "",
-				Value: string(contents),
-			})
-		}
-
-		migration = db.Migration {
-			Queries: queries,
-		}
-
-		postgres := db.Postgres{
-			Dbname: cmdDatabaseName,
-			Port: cmdDatabasePort,
-			Password: cmdDatabasePassword,
-			User: cmdDatabaseUser,
-			Host: cmdDatabaseHost,
-		}
-
-		postgres.Verify(migration)
+		verifyFunc(args)
 	},
 }
 
