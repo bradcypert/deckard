@@ -14,7 +14,7 @@
 
 package main
 
-import "deckard/cmd"
+import "github.com/bradcypert/deckard/cmd"
 
 func main() {
 	cmd.Execute()
