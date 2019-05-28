@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"deckard/db"
+	"github.com/bradcypert/deckard/db"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
