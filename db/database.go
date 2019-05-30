@@ -5,18 +5,94 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // import for side effects
 	"io"
 	"log"
 	"strings"
 )
 
+// Database a structure for defining a database connection string.
 type Database struct {
 	Host string
 	Port int
 	User string
 	Password string
 	Dbname string
+}
+
+// RunUp Runs an up migration against a given database.
+func (d Database) RunUp(migration Migration) {
+	const driver string = "postgres" // TODO: Change me
+	db := d.connect(driver)
+	defer db.Close()
+	ranSomething := false
+	for _, query := range migration.Queries {
+		if hasDbAlreadyRan(driver, db, query) {
+			continue
+		}
+		println(query.Value)
+		_, err := db.Exec(query.Value)
+		ranSomething = true
+		if err == nil {
+			_, err = storeMigrationMetadata(driver, db, query)
+			if err != nil {
+				log.Fatal("Failed to write migration metadata.\n", err)
+			}
+		} else {
+			log.Fatal("Failed to execute migration!", err)
+		}
+	}
+
+	if !ranSomething {
+		fmt.Println("No migrations were ran!")
+	}
+}
+
+// RunDown Runs a down migration against a given database.
+func (p Database) RunDown(migration Migration) {
+	const driver string = "postgres"
+	db := p.connect(driver)
+	defer db.Close()
+	ranSomething := false
+	for _, query := range migration.Queries {
+		if !canRunDownMigration(driver, db, query) {
+			continue
+		}
+		println(query.Value)
+		_, err := db.Exec(query.Value)
+		ranSomething = true
+		if err == nil {
+			_, err = deleteMigrationMetadata(driver, db, query)
+			if err != nil {
+				log.Fatal("Failed to delete migration metadata.")
+			}
+		} else {
+			log.Fatal("Failed to execute migration!", err)
+		}
+	}
+
+	if !ranSomething {
+		fmt.Println("No migrations were ran!")
+	}
+}
+
+// Verify verifies that a given migration has been ran against a given database.
+func (d Database) Verify(migration Migration) {
+	const driver string = "postgres"
+	db := d.connect(driver)
+	defer db.Close()
+	for _, query := range migration.Queries {
+		println("Verifying:", query.Value)
+
+		if hasDbAlreadyRan(driver, db, query) {
+			fmt.Println(`Validation Successful! It looks like you've already ran`, query.Value, `on this database.`)
+		} else {
+			fmt.Println(`Warning: Deckard cannot verify the migration.
+Please ensure that the migration has not been changed locally since it was last ran.
+If the migration has been changed, you may want to run deckard down and deckard up again.
+Consider backing up your data before running deckard down.`)
+		}
+	}
 }
 
 func (d Database) connect(driver string) *sql.DB {
@@ -65,64 +141,10 @@ func storeMigrationMetadata(driver string, db *sql.DB, query Query) (sql.Result,
 	return db.Exec(sqlStatement, query.Name, hash)
 }
 
-func (d Database) RunUp(migration Migration) {
-	const driver string = "postgres" // TODO: Change me
-	db := d.connect(driver)
-	defer db.Close()
-	ranSomething := false
-	for _, query := range migration.Queries {
-		if hasDbAlreadyRan(driver, db, query) {
-			continue
-		}
-		println(query.Value)
-		_, err := db.Exec(query.Value)
-		ranSomething = true
-		if err == nil {
-			_, err = storeMigrationMetadata(driver, db, query)
-			if err != nil {
-				log.Fatal("Failed to write migration metadata.\n", err)
-			}
-		} else {
-			log.Fatal("Failed to execute migration!", err)
-		}
-	}
-
-	if !ranSomething {
-		fmt.Println("No migrations were ran!")
-	}
-}
-
 func deleteMigrationMetadata(driver string, db *sql.DB, query Query) (sql.Result, error) {
 	sqlStatement := getDeleteFromMetadataQueryForDriver(driver)
 	upName := strings.ReplaceAll(query.Name, ".down.sql", ".up.sql")
 	return db.Exec(sqlStatement, upName)
-}
-
-func (p Database) RunDown(migration Migration) {
-	const driver string = "postgres"
-	db := p.connect(driver)
-	defer db.Close()
-	ranSomething := false
-	for _, query := range migration.Queries {
-		if !canRunDownMigration(driver, db, query) {
-			continue
-		}
-		println(query.Value)
-		_, err := db.Exec(query.Value)
-		ranSomething = true
-		if err == nil {
-			_, err = deleteMigrationMetadata(driver, db, query)
-			if err != nil {
-				log.Fatal("Failed to delete migration metadata.")
-			}
-		} else {
-			log.Fatal("Failed to execute migration!", err)
-		}
-	}
-
-	if !ranSomething {
-		fmt.Println("No migrations were ran!")
-	}
 }
 
 func canRunDownMigration(driver string, db *sql.DB, query Query) bool {
@@ -155,23 +177,5 @@ func hasDbAlreadyRan(driver string, db *sql.DB, query Query) bool {
 		return true
 	default:
 		return false
-	}
-}
-
-func (d Database) Verify(migration Migration) {
-	const driver string = "postgres"
-	db := d.connect(driver)
-	defer db.Close()
-	for _, query := range migration.Queries {
-		println("Verifying:", query.Value)
-
-		if hasDbAlreadyRan(driver, db, query) {
-			fmt.Println(`Validation Successful! It looks like you've already ran`, query.Value, `on this database.`)
-		} else {
-			fmt.Println(`Warning: Deckard cannot verify the migration.
-Please ensure that the migration has not been changed locally since it was last ran.
-If the migration has been changed, you may want to run deckard down and deckard up again.
-Consider backing up your data before running deckard down.`)
-		}
 	}
 }
