@@ -1,5 +1,6 @@
 # Deckard
 
+[![Build Status](https://travis-ci.org/bradcypert/deckard.svg?branch=master)](https://travis-ci.org/bradcypert/deckard)
 [![Maintainability](https://api.codeclimate.com/v1/badges/3c85f35a6a7865558b27/maintainability)](https://codeclimate.com/github/bradcypert/deckard/maintainability)
 
 ### A framework agnostic tool for running database migrations.
