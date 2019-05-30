@@ -38,7 +38,7 @@ func verifyFunc(args []string) {
 		Queries: queries,
 	}
 
-	postgres := db.Postgres{
+	database := db.Database{
 		Dbname: cmdDatabaseName,
 		Port: cmdDatabasePort,
 		Password: cmdDatabasePassword,
@@ -46,7 +46,7 @@ func verifyFunc(args []string) {
 		Host: cmdDatabaseHost,
 	}
 
-	postgres.Verify(migration)
+	database.Verify(migration)
 }
 
 // verifyCmd represents the verify command

@@ -35,7 +35,7 @@ func upFunc(args []string) {
 			Queries: queries,
 		}
 
-		postgres := db.Postgres{
+		database := db.Database{
 			Dbname: cmdDatabaseName,
 			Port: cmdDatabasePort,
 			Password: cmdDatabasePassword,
@@ -43,7 +43,7 @@ func upFunc(args []string) {
 			Host: cmdDatabaseHost,
 		}
 
-		postgres.RunUp(migration)
+		database.RunUp(migration)
 	} else {
 
 	}
