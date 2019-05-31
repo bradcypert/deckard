@@ -1,9 +1,5 @@
 package db
 
-import (
-	_ "github.com/lib/pq"
-)
-
 const postgresMetadataTableExists string = `
 CREATE TABLE IF NOT EXISTS deckard_horadric_cube (
   id SERIAL,
@@ -17,8 +13,8 @@ const postgresInsertIntoMetadataTable string =
 const postgresDeleteFromMetadataTable string =
 	`DELETE FROM deckard_horadric_cube WHERE name = $1`
 
-const postgresSelectIdNameHashFromMetadataTableWhereName string =
+const postgresSelectIDNameHashFromMetadataTableWhereName string =
 	`SELECT id, name, hash FROM deckard_horadric_cube WHERE name = $1`
 
-const postgresSelectIdNameHashFromMetadataTableWhereHash string =
+const postgresSelectIDNameHashFromMetadataTableWhereHash string =
 	`SELECT id, name, hash FROM deckard_horadric_cube WHERE hash=$1;`

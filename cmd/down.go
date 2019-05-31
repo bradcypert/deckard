@@ -40,11 +40,12 @@ func downFunc(args []string) {
 			Password: cmdDatabasePassword,
 			User: cmdDatabaseUser,
 			Host: cmdDatabaseHost,
+			Driver: cmdDatabaseDriver,
 		}
 
 		database.RunDown(migration)
 	} else {
-
+		//	TODO: What if we have more args?
 	}
 }
 
@@ -73,42 +74,7 @@ deckard down add_users_to_other_users
 
 func init() {
 	rootCmd.AddCommand(downCmd)
-
-	downCmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
-		"key",
-		"k",
-		"",
-		"The database key to use from the YAML config provided in the configFile argument.")
-
-	downCmd.Flags().StringVarP(&cmdDatabaseHost,
-		"host",
-		"t",
-		"",
-		"The host for the database you'd like to apply the down migrations to.")
-
-	downCmd.Flags().StringVarP(&cmdDatabaseName,
-		"database",
-		"d",
-		"",
-		"The database name that you'd like to apply the down migrations to")
-
-	downCmd.Flags().StringVarP(&cmdDatabaseUser,
-		"user",
-		"u",
-		"",
-		"The user you'd like to connect to the database as.")
-
-	downCmd.Flags().StringVarP(&cmdDatabasePassword,
-		"password",
-		"a",
-		"",
-		"The password for the database user that you're applying migrations as.")
-
-	downCmd.Flags().IntVarP(&cmdDatabasePort,
-		"port",
-		"p",
-		0,
-		"The port that the database you're targeting runs on.")
+	addDatabaseFlags(downCmd)
 
 	dir, _ := os.Getwd()
 	downCmd.Flags().StringVarP(&cmdInputDir,

@@ -15,6 +15,7 @@ var cmdDatabaseHost string
 var cmdDatabasePort int
 var cmdDatabaseUser string
 var cmdDatabaseName string
+var cmdDatabaseDriver string
 var cmdInputDir string
 
 // rootCmd represents the base command when called without any subcommands

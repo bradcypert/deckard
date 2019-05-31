@@ -4,6 +4,7 @@ local:
   user: test
   password: test
   database: test_db
+  driver: postgres
 
 prod:
   host: localhost
@@ -11,3 +12,12 @@ prod:
   user: test
   password: test
   database: test_prod_db
+  driver: postgres
+
+local_mysql:
+  host: localhost
+  port: 3306
+  user: root
+  password: test
+  database: test_db
+  driver: mysql
