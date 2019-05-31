@@ -4,7 +4,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/3c85f35a6a7865558b27/maintainability)](https://codeclimate.com/github/bradcypert/deckard/maintainability)
 
 ### A framework agnostic tool for running database migrations.
-###### Currently, Deckard only supports Postgres. More databases coming soon!
+###### Currently, Deckard only supports MySQL & Postgres. More databases coming soon!
 
 #### Usage
 ```bash
@@ -20,7 +20,7 @@ deckard down --host=localhost --port=5432 --user=user --password=pass --database
 - [x] Verify integrity for Postgres
 - [x] Create new migrations from Deckard
 - [x] Allow reading from Config file instead of cmd flags
-- [ ] Support for MySQL
+- [x] Support for MySQL
 
 #### Managing your databases via YAML config.
 Deckard also supports managing your databases via YAML.
@@ -41,6 +41,7 @@ prod:
     user: user
     password: pass
     database: app
+    driver: postgres
 ```
 
 Alternatively, you can provide deckard the path to the configuration value you want to use.

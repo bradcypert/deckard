@@ -35,17 +35,18 @@ func upFunc(args []string) {
 			Queries: queries,
 		}
 
-		postgres := db.Postgres{
+		database := db.Database{
 			Dbname: cmdDatabaseName,
 			Port: cmdDatabasePort,
 			Password: cmdDatabasePassword,
 			User: cmdDatabaseUser,
 			Host: cmdDatabaseHost,
+			Driver: cmdDatabaseDriver,
 		}
 
-		postgres.RunUp(migration)
+		database.RunUp(migration)
 	} else {
-
+		// TODO: What if we have more args?
 	}
 }
 
@@ -61,42 +62,7 @@ var upCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(upCmd)
-
-	upCmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
-		"key",
-		"k",
-		"",
-		"The database key to use from the YAML config provided in the configFile argument.")
-
-	upCmd.Flags().StringVarP(&cmdDatabaseHost,
-		"host",
-		"t",
-		"",
-		"The host for the database you'd like to apply the up migrations to.")
-
-	upCmd.Flags().StringVarP(&cmdDatabaseName,
-		"database",
-		"d",
-		"",
-		"The database name that you'd like to apply the up migrations to")
-
-	upCmd.Flags().StringVarP(&cmdDatabaseUser,
-		"user",
-		"u",
-		"",
-		"The user you'd like to connect to the database as.")
-
-	upCmd.Flags().StringVarP(&cmdDatabasePassword,
-		"password",
-		"a",
-		"",
-		"The password for the database user that you're applying migrations as.")
-
-	upCmd.Flags().IntVarP(&cmdDatabasePort,
-		"port",
-		"p",
-		0,
-		"The port that the database you're targeting runs on.")
+	addDatabaseFlags(upCmd)
 
 	dir, _ := os.Getwd()
 	upCmd.Flags().StringVarP(&cmdInputDir,
