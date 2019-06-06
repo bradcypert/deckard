@@ -59,5 +59,27 @@ Deckard uses this metadata to keep track of what has and has not been ran via De
 
 When we run an up migration, we validate our database state against our metadata to figure out which migrations need to be ran. The same goes with down migrations as well. Finally, the up and down migrations additionally create or remove a row in the metadata table. If, for some reason, Deckard was to blow up after running a query but before successfully modifying the metadata table, you'll be able to get deckard back on the right path with a 1 row update. I say this as a caveat, but I've not yet ran into this issue.
 
+#### Running a select number of migrations
+Often times, especially with Down migrations, you'll only want to run 1 migration, or maybe a set number of migrations. To do so, you can use the `steps` flag.
+For example, If I only want to run the down query for the last migration ran, I can run:
+```
+deckard down --config=myconfig.deckard.yml --key=myDbKey --steps=1
+```
+
 #### Issues on Deckard
 I use Github issues to track small improvements and work for Deckard. Additionally, issues are a great place for questions to be asked. Please check there if you have questions, concerns or are running into issues with the tool.
+
+#### Contributing
+More to come soon.
+
+For now, throwaway DBs can be created via the following docker commands:
+
+###### Postgres
+```bash
+docker run -e "POSTGRES_USER=test" -e "POSTGRES_PASSWORD=test" -e "POSTGRES_DB=test_db" -p "5432:5432" postgres
+```
+
+###### MySQL
+```bash
+docker run --name mysql -p "3306:3306" -e MYSQL_ROOT_PASSWORD=test -e MYSQL_DATABASE=test_db mysql:8
+```
