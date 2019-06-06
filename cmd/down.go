@@ -11,6 +11,16 @@ import (
 
 func downFunc(args []string) {
 	bindVarsFromConfig()
+
+	database := db.Database{
+		Dbname: cmdDatabaseName,
+		Port: cmdDatabasePort,
+		Password: cmdDatabasePassword,
+		User: cmdDatabaseUser,
+		Host: cmdDatabaseHost,
+		Driver: cmdDatabaseDriver,
+	}
+
 	var migration db.Migration
 	queries := make([]db.Query, 0)
 
@@ -30,17 +40,10 @@ func downFunc(args []string) {
 				})
 			}
 		}
+
+		ReverseQuerySlice(queries)
 		migration = db.Migration {
 			Queries: queries,
-		}
-
-		database := db.Database{
-			Dbname: cmdDatabaseName,
-			Port: cmdDatabasePort,
-			Password: cmdDatabasePassword,
-			User: cmdDatabaseUser,
-			Host: cmdDatabaseHost,
-			Driver: cmdDatabaseDriver,
 		}
 
 		database.RunDown(migration)
