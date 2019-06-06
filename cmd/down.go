@@ -42,11 +42,12 @@ func downFunc(args []string) {
 		}
 
 		ReverseQuerySlice(queries)
+
 		migration = db.Migration {
 			Queries: queries,
 		}
 
-		database.RunDown(migration)
+		database.RunDown(migration, cmdSteps)
 	} else {
 		//	TODO: What if we have more args?
 	}
@@ -78,6 +79,12 @@ deckard down add_users_to_other_users
 func init() {
 	rootCmd.AddCommand(downCmd)
 	addDatabaseFlags(downCmd)
+
+	downCmd.Flags().IntVarP(&cmdSteps,
+		"steps",
+		"s",
+		-1,
+		"The number of down migrations you'd like to run.")
 
 	dir, _ := os.Getwd()
 	downCmd.Flags().StringVarP(&cmdInputDir,

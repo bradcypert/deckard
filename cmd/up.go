@@ -33,7 +33,7 @@ func upFunc(args []string) {
 		}
 
 		for _, file := range files {
-			if strings.HasSuffix(file.Name(),".up.sql") {
+			if strings.HasSuffix(file.Name(), ".up.sql") {
 				contents, _ := ioutil.ReadFile(file.Name())
 				queries = append(queries, db.Query{
 					Name:  file.Name(),
@@ -45,7 +45,7 @@ func upFunc(args []string) {
 			Queries: queries,
 		}
 
-		database.RunUp(migration)
+		database.RunUp(migration, cmdSteps)
 	} else {
 		// TODO: What if we have more args?
 	}
@@ -64,6 +64,12 @@ var upCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(upCmd)
 	addDatabaseFlags(upCmd)
+
+	upCmd.Flags().IntVarP(&cmdSteps,
+		"steps",
+		"s",
+		-1,
+		"The number of up migrations you'd like to run.")
 
 	dir, _ := os.Getwd()
 	upCmd.Flags().StringVarP(&cmdInputDir,

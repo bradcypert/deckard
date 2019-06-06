@@ -17,6 +17,7 @@ var cmdDatabaseUser string
 var cmdDatabaseName string
 var cmdDatabaseDriver string
 var cmdInputDir string
+var cmdSteps int
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

@@ -35,7 +35,7 @@ type Database struct {
 }
 
 // RunUp Runs an up migration against a given database.
-func (d Database) RunUp(migration Migration) {
+func (d Database) RunUp(migration Migration, steps int) {
 	db := d.connect(d.Driver)
 	defer db.Close()
 	ranSomething := false
@@ -43,8 +43,14 @@ func (d Database) RunUp(migration Migration) {
 		if hasDbAlreadyRan(d.Driver, db, query) {
 			continue
 		}
+
+		if steps == 0 {
+			break
+		}
+
 		println(query.Value)
 		_, err := db.Exec(query.Value)
+		steps--
 		ranSomething = true
 		if err == nil {
 			_, err = storeMigrationMetadata(d.Driver, db, query)
@@ -62,7 +68,11 @@ func (d Database) RunUp(migration Migration) {
 }
 
 // RunDown Runs a down migration against a given database.
-func (d Database) RunDown(migration Migration) {
+// migration - The migration to be ran.
+// steps - the number of queries to perform against that migration.
+// Example:
+// If you have three down migrations, we'll call them 1.down.sql, 2.down.sql, and 3.down.sql
+func (d Database) RunDown(migration Migration, steps int) {
 	db := d.connect(d.Driver)
 	defer db.Close()
 	ranSomething := false
@@ -70,8 +80,13 @@ func (d Database) RunDown(migration Migration) {
 		if !canRunDownMigration(d.Driver, db, query) {
 			continue
 		}
+
+		if steps == 0 {
+			break
+		}
 		println(query.Value)
 		_, err := db.Exec(query.Value)
+		steps--
 		ranSomething = true
 		if err == nil {
 			_, err = deleteMigrationMetadata(d.Driver, db, query)
