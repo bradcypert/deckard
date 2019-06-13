@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"bufio"
+	"fmt"
 	"github.com/bradcypert/deckard/db"
 	"github.com/spf13/cobra"
 	"io/ioutil"
@@ -47,7 +49,18 @@ func downFunc(args []string) {
 			Queries: queries,
 		}
 
-		database.RunDown(migration, cmdSteps)
+		// warn the user. Downs are usually destructive.
+		fmt.Printf("Heads up! You're about to run DOWN migrations. These migrations are likely destructive.\n")
+		fmt.Printf("Would you like to continue? y/N: ")
+		reader := bufio.NewReader(os.Stdin)
+		char, _, err := reader.ReadRune()
+
+		if char == 'Y' || char == 'y' {
+			database.RunDown(migration, cmdSteps)
+		} else {
+			log.Fatal("Understood! Aborting...")
+		}
+
 	} else {
 		//	TODO: What if we have more args?
 	}
