@@ -8,12 +8,12 @@ import (
 
 func bindVarsFromConfig() {
 	if cmdDatabaseConfigSelector != "" {
-		cmdDatabasePort = viper.GetInt(cmdDatabaseConfigSelector+".port")
-		cmdDatabasePassword = viper.GetString(cmdDatabaseConfigSelector+".password")
-		cmdDatabaseUser = viper.GetString(cmdDatabaseConfigSelector+".user")
-		cmdDatabaseHost = viper.GetString(cmdDatabaseConfigSelector+".host")
-		cmdDatabaseName = viper.GetString(cmdDatabaseConfigSelector+".database")
-		cmdDatabaseDriver = viper.GetString(cmdDatabaseConfigSelector+".driver")
+		cmdDatabasePort = viper.GetInt(cmdDatabaseConfigSelector + ".port")
+		cmdDatabasePassword = viper.GetString(cmdDatabaseConfigSelector + ".password")
+		cmdDatabaseUser = viper.GetString(cmdDatabaseConfigSelector + ".user")
+		cmdDatabaseHost = viper.GetString(cmdDatabaseConfigSelector + ".host")
+		cmdDatabaseName = viper.GetString(cmdDatabaseConfigSelector + ".database")
+		cmdDatabaseDriver = viper.GetString(cmdDatabaseConfigSelector + ".driver")
 	}
 }
 
@@ -62,8 +62,8 @@ func addDatabaseFlags(cmd *cobra.Command) {
 }
 
 func ReverseQuerySlice(a []db.Query) []db.Query {
-	for i := len(a)/2-1; i >= 0; i-- {
-		opp := len(a)-1-i
+	for i := len(a)/2 - 1; i >= 0; i-- {
+		opp := len(a) - 1 - i
 		a[i], a[opp] = a[opp], a[i]
 	}
 	return a

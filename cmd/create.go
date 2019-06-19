@@ -23,8 +23,8 @@ func createFunc(args []string) {
 	upError := createFile(filepath + ".up.sql")
 	downError := createFile(filepath + ".down.sql")
 
-	fmt.Printf("Created file %s\n", filepath + ".up.sql")
-	fmt.Printf("Created file %s\n", filepath + ".down.sql")
+	fmt.Printf("Created file %s\n", filepath+".up.sql")
+	fmt.Printf("Created file %s\n", filepath+".down.sql")
 
 	if upError != nil {
 		log.Fatal(upError)
@@ -47,7 +47,7 @@ func createFile(path string) error {
 }
 
 func makeTimestamp(t time.Time) string {
-	return strconv.FormatInt(t.UnixNano() / int64(time.Millisecond), 10)
+	return strconv.FormatInt(t.UnixNano()/int64(time.Millisecond), 10)
 }
 
 var createCmd = &cobra.Command{

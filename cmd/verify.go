@@ -12,7 +12,7 @@ func verifyFunc(args []string) {
 	var migration db.Migration
 	queries := make([]db.Query, 0)
 
-	if strings.HasSuffix(args[0],".up.sql") {
+	if strings.HasSuffix(args[0], ".up.sql") {
 		contents, _ := ioutil.ReadFile(args[0])
 		queries = append(queries, db.Query{
 			Name:  "",
@@ -20,17 +20,17 @@ func verifyFunc(args []string) {
 		})
 	}
 
-	migration = db.Migration {
+	migration = db.Migration{
 		Queries: queries,
 	}
 
 	database := db.Database{
-		Dbname: cmdDatabaseName,
-		Port: cmdDatabasePort,
+		Dbname:   cmdDatabaseName,
+		Port:     cmdDatabasePort,
 		Password: cmdDatabasePassword,
-		User: cmdDatabaseUser,
-		Host: cmdDatabaseHost,
-		Driver: cmdDatabaseDriver,
+		User:     cmdDatabaseUser,
+		Host:     cmdDatabaseHost,
+		Driver:   cmdDatabaseDriver,
 	}
 
 	database.Verify(migration)

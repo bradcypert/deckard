@@ -5,6 +5,6 @@ type Migration struct {
 }
 
 type Query struct {
-	Name string
+	Name  string
 	Value string
 }

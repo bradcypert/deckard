@@ -7,7 +7,7 @@ func getCreateMetadataQueryForDriver(driver string) string {
 	case "mysql":
 		return mySQLMetadataTableExists
 	default: // postgres
-		return  postgresMetadataTableExists
+		return postgresMetadataTableExists
 	}
 }
 
@@ -16,7 +16,7 @@ func getInsertIntoMetadataQueryForDriver(driver string) string {
 	case "mysql":
 		return mySQLInsertIntoMetadataTable
 	default: // postgres
-		return  postgresInsertIntoMetadataTable
+		return postgresInsertIntoMetadataTable
 	}
 }
 
@@ -25,7 +25,7 @@ func getDeleteFromMetadataQueryForDriver(driver string) string {
 	case "mysql":
 		return mySQLDeleteFromMetadataTable
 	default: // postgres
-		return  postgresDeleteFromMetadataTable
+		return postgresDeleteFromMetadataTable
 	}
 }
 
@@ -34,7 +34,7 @@ func getSelectIDNameHashFromMetadataWhereNameQueryForDriver(driver string) strin
 	case "mysql":
 		return mySQLSelectIDNameHashFromMetadataTableWhereName
 	default: // postgres
-		return  postgresSelectIDNameHashFromMetadataTableWhereName
+		return postgresSelectIDNameHashFromMetadataTableWhereName
 	}
 }
 
@@ -43,7 +43,7 @@ func getSelectIDNameHashFromMetadataWhereHashQueryForDriver(driver string) strin
 	case "mysql":
 		return mySQLSelectIDNameHashFromMetadataTableWhereHash
 	default: // postgres
-		return  postgresSelectIDNameHashFromMetadataTableWhereHash
+		return postgresSelectIDNameHashFromMetadataTableWhereHash
 	}
 }
 
@@ -52,7 +52,7 @@ func getConnectionInfoForDatabase(d Database) string {
 	case "mysql":
 		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", d.User, d.Password, d.Host, d.Port, d.Dbname)
 	default: // postgres
-		return  fmt.Sprintf("host=%s port=%d user=%s "+
-			"password=%s dbname=%s sslmode=disable",d.Host, d.Port, d.User, d.Password, d.Dbname)
+		return fmt.Sprintf("host=%s port=%d user=%s "+
+			"password=%s dbname=%s sslmode=disable", d.Host, d.Port, d.User, d.Password, d.Dbname)
 	}
 }

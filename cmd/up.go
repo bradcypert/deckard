@@ -9,17 +9,16 @@ import (
 	"strings"
 )
 
-
 func upFunc(args []string) {
 	bindVarsFromConfig()
 
 	database := db.Database{
-		Dbname: cmdDatabaseName,
-		Port: cmdDatabasePort,
+		Dbname:   cmdDatabaseName,
+		Port:     cmdDatabasePort,
 		Password: cmdDatabasePassword,
-		User: cmdDatabaseUser,
-		Host: cmdDatabaseHost,
-		Driver: cmdDatabaseDriver,
+		User:     cmdDatabaseUser,
+		Host:     cmdDatabaseHost,
+		Driver:   cmdDatabaseDriver,
 	}
 
 	var migration db.Migration
@@ -41,7 +40,7 @@ func upFunc(args []string) {
 				})
 			}
 		}
-		migration = db.Migration {
+		migration = db.Migration{
 			Queries: queries,
 		}
 
@@ -55,7 +54,7 @@ func upFunc(args []string) {
 var upCmd = &cobra.Command{
 	Use:   "up",
 	Short: "Runs one or more \"up\" migrations.",
-	Long: `Runs one or more \"up\" migrations.`,
+	Long:  `Runs one or more \"up\" migrations.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		upFunc(args)
 	},

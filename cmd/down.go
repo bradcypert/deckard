@@ -15,12 +15,12 @@ func downFunc(args []string) {
 	bindVarsFromConfig()
 
 	database := db.Database{
-		Dbname: cmdDatabaseName,
-		Port: cmdDatabasePort,
+		Dbname:   cmdDatabaseName,
+		Port:     cmdDatabasePort,
 		Password: cmdDatabasePassword,
-		User: cmdDatabaseUser,
-		Host: cmdDatabaseHost,
-		Driver: cmdDatabaseDriver,
+		User:     cmdDatabaseUser,
+		Host:     cmdDatabaseHost,
+		Driver:   cmdDatabaseDriver,
 	}
 
 	var migration db.Migration
@@ -34,7 +34,7 @@ func downFunc(args []string) {
 		}
 
 		for _, file := range files {
-			if strings.HasSuffix(file.Name(),".down.sql") {
+			if strings.HasSuffix(file.Name(), ".down.sql") {
 				contents, _ := ioutil.ReadFile(file.Name())
 				queries = append(queries, db.Query{
 					Name:  file.Name(),
@@ -45,7 +45,7 @@ func downFunc(args []string) {
 
 		ReverseQuerySlice(queries)
 
-		migration = db.Migration {
+		migration = db.Migration{
 			Queries: queries,
 		}
 

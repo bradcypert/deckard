@@ -9,7 +9,7 @@ import (
 var caneCmd = &cobra.Command{
 	Use:   "cane",
 	Short: "Ponder mysteries of the Horadrim",
-	Long: `Ponder mysteries of the Horadrim`,
+	Long:  `Ponder mysteries of the Horadrim`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Stay a while and listen...")
 	},

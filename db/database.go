@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	_ "github.com/lib/pq" // import for side effects
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq" // import for side effects
 	"io"
 	"log"
 	"strings"
@@ -26,12 +26,12 @@ const failedToHash = "Failed to Hash:"
 
 // Database a structure for defining a database connection string.
 type Database struct {
-	Host string
-	Port int
-	User string
+	Host     string
+	Port     int
+	User     string
 	Password string
-	Dbname string
-	Driver string
+	Dbname   string
+	Driver   string
 }
 
 // RunUp Runs an up migration against a given database.
