@@ -1,54 +1,11 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"strconv"
-	"strings"
-	"time"
-
+	"github.com/bradcypert/deckard/lib/migrations"
 	"github.com/spf13/cobra"
 )
 
 var createOutputDir string
-
-func createFunc(args []string) {
-	// Add in the / suffix if it wasn't added by the user
-	if len(createOutputDir) > 0 && !strings.HasSuffix(createOutputDir, "/") {
-		createOutputDir += "/"
-	}
-
-	filepath := createOutputDir + makeTimestamp(time.Now()) + "__" + args[0]
-	upError := createFile(filepath + ".up.sql")
-	downError := createFile(filepath + ".down.sql")
-
-	fmt.Printf("Created file %s\n", filepath+".up.sql")
-	fmt.Printf("Created file %s\n", filepath+".down.sql")
-
-	if upError != nil {
-		log.Fatal(upError)
-	}
-
-	if downError != nil {
-		log.Fatal(downError)
-	}
-}
-
-func createFile(path string) error {
-	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = f.Close()
-
-	return err
-}
-
-func makeTimestamp(t time.Time) string {
-	return strconv.FormatInt(t.UnixNano()/int64(time.Millisecond), 10)
-}
 
 var createCmd = &cobra.Command{
 	Use:   "create",
@@ -59,7 +16,7 @@ any migration with this command, however.
 Use: deckard create add_login_date_to_users`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		createFunc(args)
+		migrations.Create(createOutputDir, args[0])
 	},
 }
 

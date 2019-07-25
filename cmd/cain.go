@@ -6,8 +6,8 @@ import (
 )
 
 // caneCmd represents the cane command
-var caneCmd = &cobra.Command{
-	Use:   "cane",
+var cainCmd = &cobra.Command{
+	Use:   "cain",
 	Short: "Ponder mysteries of the Horadrim",
 	Long:  `Ponder mysteries of the Horadrim`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -16,5 +16,5 @@ var caneCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(caneCmd)
+	rootCmd.AddCommand(cainCmd)
 }
