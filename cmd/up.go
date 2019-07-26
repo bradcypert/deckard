@@ -1,12 +1,11 @@
 package cmd
 
 import (
-	"github.com/bradcypert/deckard/lib/db"
-	"github.com/spf13/cobra"
-	"io/ioutil"
-	"log"
 	"os"
-	"strings"
+
+	"github.com/bradcypert/deckard/lib/db"
+	"github.com/bradcypert/deckard/lib/migrations"
+	"github.com/spf13/cobra"
 )
 
 func upFunc(args []string) {
@@ -21,29 +20,9 @@ func upFunc(args []string) {
 		Driver:   cmdDatabaseDriver,
 	}
 
-	var migration db.Migration
-	queries := make([]db.Query, 0)
-
 	if len(args) < 1 {
 		// get all migrations in current folder.
-		files, err := ioutil.ReadDir(cmdInputDir)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for _, file := range files {
-			if strings.HasSuffix(file.Name(), ".up.sql") {
-				contents, _ := ioutil.ReadFile(file.Name())
-				queries = append(queries, db.Query{
-					Name:  file.Name(),
-					Value: string(contents),
-				})
-			}
-		}
-		migration = db.Migration{
-			Queries: queries,
-		}
-
+		migration := migrations.FindInPath(cmdInputDir, true)
 		database.RunUp(migration, cmdSteps)
 	} else {
 		// TODO: What if we have more args?

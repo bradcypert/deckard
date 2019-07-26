@@ -3,12 +3,12 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"github.com/bradcypert/deckard/lib/db"
-	"github.com/spf13/cobra"
-	"io/ioutil"
 	"log"
 	"os"
-	"strings"
+
+	"github.com/bradcypert/deckard/lib/db"
+	"github.com/bradcypert/deckard/lib/migrations"
+	"github.com/spf13/cobra"
 )
 
 func downFunc(args []string) {
@@ -23,37 +23,14 @@ func downFunc(args []string) {
 		Driver:   cmdDatabaseDriver,
 	}
 
-	var migration db.Migration
-	queries := make([]db.Query, 0)
-
 	if len(args) < 1 {
-		// get all migrations in current folder.
-		files, err := ioutil.ReadDir(cmdInputDir)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for _, file := range files {
-			if strings.HasSuffix(file.Name(), ".down.sql") {
-				contents, _ := ioutil.ReadFile(file.Name())
-				queries = append(queries, db.Query{
-					Name:  file.Name(),
-					Value: string(contents),
-				})
-			}
-		}
-
-		ReverseQuerySlice(queries)
-
-		migration = db.Migration{
-			Queries: queries,
-		}
+		migration := migrations.FindInPath(cmdInputDir, false)
 
 		// warn the user. Downs are usually destructive.
 		fmt.Printf("Heads up! You're about to run DOWN migrations. These migrations are likely destructive.\n")
 		fmt.Printf("Would you like to continue? y/N: ")
 		reader := bufio.NewReader(os.Stdin)
-		char, _, err := reader.ReadRune()
+		char, _, _ := reader.ReadRune()
 
 		if char == 'Y' || char == 'y' {
 			database.RunDown(migration, cmdSteps)
