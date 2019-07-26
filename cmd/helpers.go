@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/bradcypert/deckard/lib/db"
+	"github.com/bradcypert/deckard/lib/migrations"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -61,7 +61,7 @@ func addDatabaseFlags(cmd *cobra.Command) {
 		"The database driver for connecting to the database. Valid options are: [mysql, postgres]")
 }
 
-func ReverseQuerySlice(a []db.Query) []db.Query {
+func ReverseQuerySlice(a []migrations.Query) []migrations.Query {
 	for i := len(a)/2 - 1; i >= 0; i-- {
 		opp := len(a) - 1 - i
 		a[i], a[opp] = a[opp], a[i]

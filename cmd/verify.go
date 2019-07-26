@@ -1,26 +1,28 @@
 package cmd
 
 import (
-	"github.com/bradcypert/deckard/lib/db"
-	"github.com/spf13/cobra"
 	"io/ioutil"
 	"strings"
+
+	"github.com/bradcypert/deckard/lib/db"
+	"github.com/bradcypert/deckard/lib/migrations"
+	"github.com/spf13/cobra"
 )
 
 func verifyFunc(args []string) {
 	bindVarsFromConfig()
-	var migration db.Migration
-	queries := make([]db.Query, 0)
+	var migration migrations.Migration
+	queries := make([]migrations.Query, 0)
 
 	if strings.HasSuffix(args[0], ".up.sql") {
 		contents, _ := ioutil.ReadFile(args[0])
-		queries = append(queries, db.Query{
+		queries = append(queries, migrations.Query{
 			Name:  "",
 			Value: string(contents),
 		})
 	}
 
-	migration = db.Migration{
+	migration = migrations.Migration{
 		Queries: queries,
 	}
 

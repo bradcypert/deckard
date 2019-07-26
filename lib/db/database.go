@@ -5,11 +5,13 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq" // import for side effects
 	"io"
 	"log"
 	"strings"
+
+	"github.com/bradcypert/deckard/lib/migrations"
+	_ "github.com/go-sql-driver/mysql" // import for side effects
+	_ "github.com/lib/pq"              // import for side effects
 )
 
 const validationError = `Warning: Deckard cannot verify the migration.
@@ -35,7 +37,7 @@ type Database struct {
 }
 
 // RunUp Runs an up migration against a given database.
-func (d Database) RunUp(migration Migration, steps int) {
+func (d Database) RunUp(migration migrations.Migration, steps int) {
 	db := d.connect(d.Driver)
 	defer db.Close()
 	ranSomething := false
@@ -72,7 +74,7 @@ func (d Database) RunUp(migration Migration, steps int) {
 // steps - the number of queries to perform against that migration.
 // Example:
 // If you have three down migrations, we'll call them 1.down.sql, 2.down.sql, and 3.down.sql
-func (d Database) RunDown(migration Migration, steps int) {
+func (d Database) RunDown(migration migrations.Migration, steps int) {
 	db := d.connect(d.Driver)
 	defer db.Close()
 	ranSomething := false
@@ -104,7 +106,7 @@ func (d Database) RunDown(migration Migration, steps int) {
 }
 
 // Verify verifies that a given migration has been ran against a given database.
-func (d Database) Verify(migration Migration) {
+func (d Database) Verify(migration migrations.Migration) {
 	db := d.connect(d.Driver)
 	defer db.Close()
 	for _, query := range migration.Queries {
@@ -156,19 +158,19 @@ func createHash(s string) string {
 	return hex.EncodeToString(hash.Sum(nil)[:])
 }
 
-func storeMigrationMetadata(driver string, db *sql.DB, query Query) (sql.Result, error) {
+func storeMigrationMetadata(driver string, db *sql.DB, query migrations.Query) (sql.Result, error) {
 	sqlStatement := getInsertIntoMetadataQueryForDriver(driver)
 	hash := createHash(query.Value)
 	return db.Exec(sqlStatement, query.Name, hash)
 }
 
-func deleteMigrationMetadata(driver string, db *sql.DB, query Query) (sql.Result, error) {
+func deleteMigrationMetadata(driver string, db *sql.DB, query migrations.Query) (sql.Result, error) {
 	sqlStatement := getDeleteFromMetadataQueryForDriver(driver)
 	upName := strings.ReplaceAll(query.Name, ".down.sql", ".up.sql")
 	return db.Exec(sqlStatement, upName)
 }
 
-func canRunDownMigration(driver string, db *sql.DB, query Query) bool {
+func canRunDownMigration(driver string, db *sql.DB, query migrations.Query) bool {
 	var name string
 	var hash string
 	var id int
@@ -185,7 +187,7 @@ func canRunDownMigration(driver string, db *sql.DB, query Query) bool {
 	}
 }
 
-func hasDbAlreadyRan(driver string, db *sql.DB, query Query) bool {
+func hasDbAlreadyRan(driver string, db *sql.DB, query migrations.Query) bool {
 	var name string
 	var hash string
 	var id int
