@@ -17,6 +17,7 @@ func TestMakeTimestamp(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	os.Mkdir("./tmp", 0777)
+	defer os.RemoveAll("./tmp")
 	Create("./tmp", "test_create")
 
 	files, err := ioutil.ReadDir("./tmp")
@@ -32,6 +33,23 @@ func TestCreate(t *testing.T) {
 	if len(files) < 2 {
 		t.Error("Did not create an up and a down migration.")
 	}
+}
 
-	os.RemoveAll("./tmp")
+func TestFindInPath(t *testing.T) {
+	os.Mkdir("./tmp", 0777)
+	defer os.RemoveAll("./tmp")
+	os.Create("./tmp/123__foo.up.sql")
+	os.Create("./tmp/123__foo.down.sql")
+
+	migration := FindInPath("./tmp", true)
+
+	if len(migration.Queries) != 1 {
+		t.Error("Did not find exactly 1 up query")
+	}
+
+	migration = FindInPath("./tmp", false)
+
+	if len(migration.Queries) != 1 {
+		t.Error("Did not find exactly 1 down query")
+	}
 }
