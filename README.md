@@ -2,11 +2,14 @@
 
 [![Build Status](https://travis-ci.org/bradcypert/deckard.svg?branch=master)](https://travis-ci.org/bradcypert/deckard)
 [![Maintainability](https://api.codeclimate.com/v1/badges/3c85f35a6a7865558b27/maintainability)](https://codeclimate.com/github/bradcypert/deckard/maintainability)
+[![GoDoc](https://godoc.org/github.com/bradcypert/deckard?status.svg)](https://godoc.org/github.com/bradcypert/deckard)
 
 ### A framework agnostic tool for running database migrations.
 ###### Currently, Deckard only supports MySQL & Postgres. More databases coming soon!
 
-#### Usage
+Deckard consists of two major packages -- cmd and lib. The `lib` package contains the logic that deckard runs on, as well as the supporting database layers. The `cmd` package simply wraps the `lib` package in an easy to use CLI. IE: If you want to use deckard as a CLI you can, but you can also specify it as a dependency and build ontop of it!
+
+## CLI Usage
 ```bash
 deckard create add_login_date_to_users
 # modify the created files
@@ -66,11 +69,10 @@ For example, If I only want to run the down query for the last migration ran, I 
 deckard down --config=myconfig.deckard.yml --key=myDbKey --steps=1
 ```
 
+## Contributing
+
 #### Issues on Deckard
 I use Github issues to track small improvements and work for Deckard. Additionally, issues are a great place for questions to be asked. Please check there if you have questions, concerns or are running into issues with the tool.
-
-#### Contributing
-More to come soon.
 
 For now, throwaway DBs can be created via the following docker commands:
 
