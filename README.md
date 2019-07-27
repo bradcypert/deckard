@@ -1,5 +1,5 @@
+![](https://user-images.githubusercontent.com/1455979/61998340-756f7380-b063-11e9-8f10-05e078321ccd.png)
 # Deckard
-
 [![Build Status](https://travis-ci.org/bradcypert/deckard.svg?branch=master)](https://travis-ci.org/bradcypert/deckard)
 [![Maintainability](https://api.codeclimate.com/v1/badges/3c85f35a6a7865558b27/maintainability)](https://codeclimate.com/github/bradcypert/deckard/maintainability)
 [![GoDoc](https://godoc.org/github.com/bradcypert/deckard?status.svg)](https://godoc.org/github.com/bradcypert/deckard)
