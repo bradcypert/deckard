@@ -77,7 +77,7 @@ func Create(outputDir string, name string) {
 }
 
 func createFile(path string) error {
-	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.Create(path)
 	if err != nil {
 		log.Fatal(err)
 	}
