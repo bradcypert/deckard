@@ -1,6 +1,6 @@
-package main
+package cmd
 
-import "github.com/bradcypert/deckard/cmd"
+import "github.com/spf13/cobra/cobra/cmd"
 
 func main() {
 	cmd.Execute()
