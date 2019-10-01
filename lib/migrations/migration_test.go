@@ -8,8 +8,10 @@ import (
 	"time"
 )
 
+var migrations = Migrations{false}
+
 func TestMakeTimestamp(t *testing.T) {
-	timestamp := makeTimestamp(time.Date(2000, 4, 17, 4, 44, 44, 0, time.UTC))
+	timestamp := migrations.makeTimestamp(time.Date(2000, 4, 17, 4, 44, 44, 0, time.UTC))
 	if timestamp != "955946684000" {
 		t.Error("Expected to find:", 0, "instead got:", timestamp)
 	}
@@ -18,7 +20,7 @@ func TestMakeTimestamp(t *testing.T) {
 func TestCreate(t *testing.T) {
 	os.Mkdir("./tmp", 0777)
 	defer os.RemoveAll("./tmp")
-	Create("./tmp", "test_create")
+	migrations.Create("./tmp", "test_create")
 
 	files, err := ioutil.ReadDir("./tmp")
 
@@ -41,13 +43,13 @@ func TestFindInPath(t *testing.T) {
 	os.Create("./tmp/123__foo.up.sql")
 	os.Create("./tmp/123__foo.down.sql")
 
-	migration := FindInPath("./tmp", true)
+	migration := migrations.FindInPath("./tmp", true)
 
 	if len(migration.Queries) != 1 {
 		t.Error("Did not find exactly 1 up query")
 	}
 
-	migration = FindInPath("./tmp", false)
+	migration = migrations.FindInPath("./tmp", false)
 
 	if len(migration.Queries) != 1 {
 		t.Error("Did not find exactly 1 down query")
