@@ -33,6 +33,7 @@ func verifyFunc(args []string) {
 		User:     cmdDatabaseUser,
 		Host:     cmdDatabaseHost,
 		Driver:   cmdDatabaseDriver,
+		IsSilent: cmdIsSilent,
 	}
 
 	database.Verify(migration)

@@ -18,6 +18,8 @@ func bindVarsFromConfig() {
 }
 
 func addDatabaseFlags(cmd *cobra.Command) {
+	AddSilentFlag(cmd)
+
 	cmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
 		"key",
 		"k",
@@ -59,6 +61,13 @@ func addDatabaseFlags(cmd *cobra.Command) {
 		"r",
 		"",
 		"The database driver for connecting to the database. Valid options are: [mysql, postgres]")
+}
+
+func AddSilentFlag(cmd *cobra.Command) {
+	cmd.Flags().BoolVar(&cmdIsSilent,
+		"silent",
+		false,
+		"Supress non-fatal log messages")
 }
 
 func ReverseQuerySlice(a []migrations.Query) []migrations.Query {

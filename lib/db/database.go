@@ -34,6 +34,7 @@ type Database struct {
 	Password string
 	Dbname   string
 	Driver   string
+	IsSilent bool
 }
 
 // RunUp Runs an up migration against a given database.

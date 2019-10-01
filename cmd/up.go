@@ -18,10 +18,12 @@ func upFunc(args []string) {
 		User:     cmdDatabaseUser,
 		Host:     cmdDatabaseHost,
 		Driver:   cmdDatabaseDriver,
+		IsSilent: cmdIsSilent,
 	}
 
 	if len(args) < 1 {
 		// get all migrations in current folder.
+		migrations := migrations.Migrations{cmdIsSilent}
 		migration := migrations.FindInPath(cmdInputDir, true)
 		database.RunUp(migration, cmdSteps)
 	} else {

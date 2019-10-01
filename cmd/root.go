@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var cfgFile string
@@ -17,6 +18,7 @@ var cmdDatabaseUser string
 var cmdDatabaseName string
 var cmdDatabaseDriver string
 var cmdInputDir string
+var cmdIsSilent bool
 var cmdSteps int
 
 // rootCmd represents the base command when called without any subcommands
