@@ -18,7 +18,7 @@ func bindVarsFromConfig() {
 }
 
 func addDatabaseFlags(cmd *cobra.Command) {
-	AddSilentFlag(cmd)
+	addSilentFlag(cmd)
 
 	cmd.Flags().StringVarP(&cmdDatabaseConfigSelector,
 		"key",
@@ -63,7 +63,7 @@ func addDatabaseFlags(cmd *cobra.Command) {
 		"The database driver for connecting to the database. Valid options are: [mysql, postgres]")
 }
 
-func AddSilentFlag(cmd *cobra.Command) {
+func addSilentFlag(cmd *cobra.Command) {
 	cmd.Flags().BoolVar(&cmdIsSilent,
 		"silent",
 		false,

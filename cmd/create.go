@@ -25,6 +25,6 @@ Use: deckard create add_login_date_to_users`,
 
 func init() {
 	rootCmd.AddCommand(createCmd)
-	AddSilentFlag(createCmd)
+	addSilentFlag(createCmd)
 	createCmd.Flags().StringVarP(&createOutputDir, "outputDir", "o", "", "Output directory to write the migration to, defaults to current directory.")
 }
