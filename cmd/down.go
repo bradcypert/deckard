@@ -21,9 +21,11 @@ func downFunc(args []string) {
 		User:     cmdDatabaseUser,
 		Host:     cmdDatabaseHost,
 		Driver:   cmdDatabaseDriver,
+		IsSilent: cmdIsSilent,
 	}
 
 	if len(args) < 1 {
+		migrations := migrations.Migrations{cmdIsSilent}
 		migration := migrations.FindInPath(cmdInputDir, false)
 
 		// warn the user. Downs are usually destructive.

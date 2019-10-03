@@ -34,6 +34,7 @@ type Database struct {
 	Password string
 	Dbname   string
 	Driver   string
+	IsSilent bool
 }
 
 // RunUp Runs an up migration against a given database.
@@ -112,9 +113,9 @@ func (d Database) Verify(migration migrations.Migration) {
 	for _, query := range migration.Queries {
 		println("Verifying:", query.Value)
 
-		if hasDbAlreadyRan(d.Driver, db, query) {
+		if hasDbAlreadyRan(d.Driver, db, query) && !d.IsSilent {
 			fmt.Println(`Validation Successful! It looks like you've already ran`, query.Value, `on this database.`)
-		} else {
+		} else if !d.IsSilent {
 			fmt.Println(validationError)
 		}
 	}
