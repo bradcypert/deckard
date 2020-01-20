@@ -64,6 +64,7 @@ deckard down 1558294955321
 deckard down add_users_to_other_users
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		configOverwriter(cmd)
 		downFunc(args)
 	},
 }

@@ -52,6 +52,7 @@ Example:
 deckard verify ./migrations/1234_add_login_date_to_users.up.sql`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		configOverwriter(cmd)
 		verifyFunc(args)
 	},
 }
