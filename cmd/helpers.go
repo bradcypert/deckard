@@ -1,10 +1,29 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/bradcypert/deckard/lib/migrations"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"log"
 )
+
+func configOverwriter(cmd *cobra.Command) {
+	overwriteConfigField(cmd, "port")
+	overwriteConfigField(cmd, "password")
+	overwriteConfigField(cmd, "user")
+	overwriteConfigField(cmd, "host")
+	overwriteConfigField(cmd, "database")
+	overwriteConfigField(cmd, "driver")
+}
+
+func overwriteConfigField(cmd *cobra.Command, field string) {
+	viperField := fmt.Sprintf("%s.%s", cmdDatabaseConfigSelector, field)
+
+	if err := viper.BindPFlag(viperField, cmd.Flags().Lookup(field)); err != nil {
+		log.Printf("Cannot overwrite %s value from config file. %s\n", field, err.Error())
+	}
+}
 
 func bindVarsFromConfig() {
 	if cmdDatabaseConfigSelector != "" {
