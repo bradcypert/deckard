@@ -37,6 +37,7 @@ var upCmd = &cobra.Command{
 	Short: "Runs one or more \"up\" migrations.",
 	Long:  `Runs one or more \"up\" migrations.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		configOverwriter(cmd)
 		upFunc(args)
 	},
 }
