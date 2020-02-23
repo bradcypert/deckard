@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/bradcypert/deckard/lib/migrations"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"log"
 )
 
 func configOverwriter(cmd *cobra.Command) {
@@ -15,6 +16,7 @@ func configOverwriter(cmd *cobra.Command) {
 	overwriteConfigField(cmd, "host")
 	overwriteConfigField(cmd, "database")
 	overwriteConfigField(cmd, "driver")
+	overwriteConfigField(cmd, "sslmode")
 }
 
 func overwriteConfigField(cmd *cobra.Command, field string) {

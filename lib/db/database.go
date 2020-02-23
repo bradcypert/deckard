@@ -28,13 +28,14 @@ const failedToHash = "Failed to Hash:"
 
 // Database a structure for defining a database connection string.
 type Database struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	Dbname   string
-	Driver   string
-	IsSilent bool
+	Host      string
+	Port      int
+	User      string
+	Password  string
+	Dbname    string
+	Driver    string
+	IsSilent  bool
+	SSLConfig string
 }
 
 // RunUp Runs an up migration against a given database.

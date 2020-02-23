@@ -20,6 +20,7 @@ var cmdDatabaseDriver string
 var cmdInputDir string
 var cmdIsSilent bool
 var cmdSteps int
+var cmdSSLConfig string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

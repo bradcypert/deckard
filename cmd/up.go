@@ -12,13 +12,14 @@ func upFunc(args []string) {
 	bindVarsFromConfig()
 
 	database := db.Database{
-		Dbname:   cmdDatabaseName,
-		Port:     cmdDatabasePort,
-		Password: cmdDatabasePassword,
-		User:     cmdDatabaseUser,
-		Host:     cmdDatabaseHost,
-		Driver:   cmdDatabaseDriver,
-		IsSilent: cmdIsSilent,
+		Dbname:    cmdDatabaseName,
+		Port:      cmdDatabasePort,
+		Password:  cmdDatabasePassword,
+		User:      cmdDatabaseUser,
+		Host:      cmdDatabaseHost,
+		Driver:    cmdDatabaseDriver,
+		IsSilent:  cmdIsSilent,
+		SSLConfig: cmdSSLConfig,
 	}
 
 	if len(args) < 1 {

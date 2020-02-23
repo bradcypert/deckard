@@ -53,6 +53,6 @@ func getConnectionInfoForDatabase(d Database) string {
 		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", d.User, d.Password, d.Host, d.Port, d.Dbname)
 	default: // postgres
 		return fmt.Sprintf("host=%s port=%d user=%s "+
-			"password=%s dbname=%s sslmode=disable", d.Host, d.Port, d.User, d.Password, d.Dbname)
+			"password=%s dbname=%s sslmode=%s", d.Host, d.Port, d.User, d.Password, d.Dbname, d.SSLConfig)
 	}
 }
