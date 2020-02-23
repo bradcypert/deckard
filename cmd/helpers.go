@@ -21,7 +21,7 @@ func configOverwriter(cmd *cobra.Command) {
 
 func overwriteConfigField(cmd *cobra.Command, field string) {
 	viperField := fmt.Sprintf("%s.%s", cmdDatabaseConfigSelector, field)
-
+	fmt.Println(cmd.Flags().Lookup(field))
 	if err := viper.BindPFlag(viperField, cmd.Flags().Lookup(field)); err != nil {
 		log.Printf("Cannot overwrite %s value from config file. %s\n", field, err.Error())
 	}
@@ -85,7 +85,7 @@ func addDatabaseFlags(cmd *cobra.Command) {
 		"The database driver for connecting to the database. Valid options are: [mysql, postgres]")
 	cmd.Flags().StringVarP(&cmdSSLConfig,
 		"sslconfig",
-		"s",
+		"z",
 		"",
 		"The config's SSL option. Postgres examples: disable, require")
 }
