@@ -35,6 +35,7 @@ func bindVarsFromConfig() {
 		cmdDatabaseHost = viper.GetString(cmdDatabaseConfigSelector + ".host")
 		cmdDatabaseName = viper.GetString(cmdDatabaseConfigSelector + ".database")
 		cmdDatabaseDriver = viper.GetString(cmdDatabaseConfigSelector + ".driver")
+		cmdSSLConfig = viper.GetString(cmdDatabaseConfigSelector + ".sslconfig")
 	}
 }
 
@@ -82,6 +83,11 @@ func addDatabaseFlags(cmd *cobra.Command) {
 		"r",
 		"",
 		"The database driver for connecting to the database. Valid options are: [mysql, postgres]")
+	cmd.Flags().StringVarP(&cmdSSLConfig,
+		"sslconfig",
+		"s",
+		"",
+		"The config's SSL option. Postgres examples: disable, require")
 }
 
 func addSilentFlag(cmd *cobra.Command) {
